@@ -1,0 +1,16 @@
+# File: events/views.py
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from ..models import Event
+from ..serializers import EventSerializer
+
+# ... (rest of your code)
+
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def delete_event(request, event_id):
+    event = get_object_or_404(Event, event_id=event_id)
+    event.delete()
+    return Response({"status": "success"}, status=200)

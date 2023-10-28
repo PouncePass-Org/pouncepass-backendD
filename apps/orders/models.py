@@ -3,8 +3,8 @@ from apps.users.models import User
 from apps.events.models import Event
 
 class Order(models.Model):
-    orderId = models.AutoField(primary_key=True)
-    userId = models.ForeignKey(User, on_delete=models.CASCADE)
-    eventId = models.ForeignKey(Event, on_delete=models.CASCADE)
-    numberOfTickets = models.IntegerField()
-    totalAmount = models.DecimalField(max_digits=10, decimal_places=2)
+    order_id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    event_id = models.ForeignKey(Event, on_delete=models.CASCADE)
+    number_of_tickets = models.IntegerField()
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)

@@ -1,7 +1,11 @@
+# /users/models.py
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
 from django.core.validators import RegexValidator
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, phone_number, password=None, **extra_fields):
@@ -21,7 +25,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
-    userId = models.AutoField(primary_key=True)
+    user_id = models.AutoField(primary_key=True)
     email = models.EmailField(unique=True)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
     phone_number = models.CharField(validators=[phone_regex], max_length=17, unique=True)  # Field for storing phone numbers
@@ -34,6 +38,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['phone_number']
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ('email', 'phone_number', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = get_user_model().objects.create(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
 
     def __str__(self):
         return self.email

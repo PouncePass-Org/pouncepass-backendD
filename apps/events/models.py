@@ -1,14 +1,15 @@
 # File: events/models.py
 from django.db import models
-from venues.models import Venue
+from apps.venues.models import Venue
 
 class Event(models.Model):
+    event_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
     date_time = models.DateTimeField()
     ticket_price = models.DecimalField(max_digits=10, decimal_places=2)
-    total_tickets = models.PositiveIntegerField()
-    available_tickets = models.PositiveIntegerField()
+    total_tickets = models.PositiveIntegerField(default=0)
+    available_tickets = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
