@@ -3,9 +3,18 @@ from django.db.transaction import atomic
 from django.core.exceptions import ValidationError
 from apps.venues.models import Venue
 
+CATEGORY_CHOICES = [
+    ('concerts', 'Concerts'),
+    ('art', 'Art'),
+    ('sports', 'Sports'),
+    ('more', 'More'),
+]
+
 class Event(models.Model):
     event_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
+    category = models.CharField(max_length=255, choices=CATEGORY_CHOICES)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name='events')
     date_time = models.DateTimeField()
     ticket_price = models.DecimalField(max_digits=10, decimal_places=2)

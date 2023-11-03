@@ -9,7 +9,7 @@ from .views.order_confirmation import OrderConfirmation
 
 urlpatterns = [
     path('order/confirmation/<int:order_id>/', OrderConfirmation.as_view(), name='order_confirmation'),
-    path('create_order/', CreateOrder.as_view(), name='create_order'),
+    path('create/', CreateOrder.as_view(), name='create_order'),
     path('get_orders/', GetOrders.as_view(), name='get_orders'),
     path('get_order/<int:order_id>/', GetOneOrder.as_view(), name='get_order'),
     path('update_order/<int:order_id>/', UpdateOrder.as_view(), name='update_order'),

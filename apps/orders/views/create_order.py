@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class CreateOrder(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     @transaction.atomic
     def post(self, request):
