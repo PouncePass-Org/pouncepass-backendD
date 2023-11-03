@@ -1,16 +1,25 @@
-# apps/users/views/authentication.py
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from apps.orders.models import Order
+from apps.tickets.models import Ticket
+from rest_framework import status
 
-from django.contrib.auth import authenticate, login, logout
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from django.contrib.auth.password_validation import validate_password
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from ..models import Order
-from django.contrib.auth.models import Group
-from rest_framework_simplejwt.tokens import RefreshToken
-import json
+class CancelOrderView(APIView):
+    permission_classes = [AllowAny]
 
-def cancelOrder(request):
-    # logic to create order
-    return JsonResponse({"status": "Order Canceled"})
+    def delete(self, request, order_id):
+        order = get_object_or_404(Order, pk=order_id, user=request.user)
+
+        # Assuming that the Order model has a status field and a method to handle cancellation
+        if order.status != 'cancelled':
+            order.status = 'cancelled'
+            order.save()
+
+            # Here, you would typically have logic to handle ticket release.
+            # For instance, update the status of the associated tickets.
+            Ticket.objects.filter(order=order).update(status='cancelled')
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Order already cancelled.'}, status=status.HTTP_400_BAD_REQUEST)

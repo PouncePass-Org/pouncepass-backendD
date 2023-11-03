@@ -1,16 +1,23 @@
-# apps/users/views/authentication.py
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from apps.orders.models import Order
+from apps.orders.serializers import OrderSerializer
+from rest_framework import status
 
-from django.contrib.auth import authenticate, login, logout
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from django.contrib.auth.password_validation import validate_password
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from ..models import Order
-from django.contrib.auth.models import Group
-from rest_framework_simplejwt.tokens import RefreshToken
-import json
+class UpdateOrder(APIView):
+    permission_classes = [AllowAny]
 
-def updateOrder(request, order_id):
-    # logic to update order
-    return JsonResponse({"status": "Order Updated"})
+    def put(self, request, order_id):
+        order = get_object_or_404(Order, pk=order_id, user=request.user)
+        serializer = OrderSerializer(order, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            #create some useful print statements
+            print("Update Order")
+            print(order)
+            return Response(serializer.data)
+        #create some useful print statements to confirm success
+        print("serializer wasn't valid")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
