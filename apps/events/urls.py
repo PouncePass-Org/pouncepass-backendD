@@ -6,11 +6,13 @@ from .views.update_event import update_event
 from .views.delete_event import delete_event
 from .views.get_all_events import GetAllEvents
 from .views.get_event import get_event
+from .views.search_events import search_events
 
 urlpatterns = [
     path('create/', CreateEvent.as_view(), name='create_order'),
     path('update/<int:event_id>/', update_event),
     path('delete/<int:event_id>/', delete_event),
     path('events/', GetAllEvents.as_view(), name='get_all_events'),
-    path('event/<int:event_id>/', get_event, name='get_event')
+    path('event/<int:event_id>/', get_event, name='get_event'),
+    path('search/', search_events, name='search_events'),
 ]
